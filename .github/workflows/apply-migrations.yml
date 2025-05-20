@@ -1,0 +1,67 @@
+name: Apply Database Migrations
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'migrations/**'
+      - 'alembic.ini'
+
+jobs:
+  apply-migrations:
+    name: Apply Alembic Migrations to Production
+    runs-on: ubuntu-latest
+    environment: production
+    # These permissions are needed for action outputs and reports
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validate migrations before applying
+        uses: OpenMindUA/alembic-actions/actions/alembic-review@v1
+        with:
+          alembic_ini_path: 'alembic.ini'
+          check_upgrade: 'true'
+          check_duplicate_ops: 'true'
+          # Only check what's necessary before applying migrations
+      
+      # Example of how you might use this in a real workflow
+      - name: Apply database migrations
+        run: |
+          # In a real workflow, you would set up database connection here
+          # This could include setting up SSH tunneling or using a VPN connection
+          # to securely connect to your production database
+          
+          # Example with environment variables for database connection
+          # export DATABASE_URL=${{ secrets.DATABASE_URL }}
+          
+          # Run the migrations
+          python run_migrations.py
+        
+      - name: Notify team of migration status
+        if: always()
+        run: |
+          # Example of notifying the team about migration status
+          if [ ${{ job.status }} == 'success' ]; then
+            echo "Migrations applied successfully!"
+            # In a real workflow, you might use Slack, Teams, or email notifications
+            # curl -X POST -H 'Content-type: application/json' --data '{"text":"✅ Migrations applied successfully!"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          else
+            echo "Migration failed!"
+            # curl -X POST -H 'Content-type: application/json' --data '{"text":"❌ Database migration failed!"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          fi
