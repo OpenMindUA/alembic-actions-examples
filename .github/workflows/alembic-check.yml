@@ -1,0 +1,48 @@
+name: Alembic Migration Check
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'app/**'
+      - 'migrations/**'
+      - 'alembic.ini'
+
+jobs:
+  check-migrations:
+    name: Validate Alembic Migrations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Check Alembic Migrations
+        uses: OpenMindUA/alembic-actions@v1
+        with:
+          # Relative path to the alembic.ini file
+          alembic_ini_path: 'alembic.ini'
+          
+          # Checks to be performed (all enabled by default)
+          check_revision_files: 'true'
+          check_revision_order: 'true'
+          check_downgrade: 'true'
+          check_upgrade: 'true'
+          check_duplicate_ops: 'true'
+          
+          # Additional optional configurations
+          # target_branch: 'main'  # Base branch to compare against (default: main or master)
+          # migration_script_path: 'migrations' # Path to the migrations directory (default: derived from alembic.ini)
