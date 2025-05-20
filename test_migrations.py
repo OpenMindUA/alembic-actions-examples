@@ -66,9 +66,34 @@ class TestAlembicMigrations(unittest.TestCase):
         self.assertIn("created_at", columns)
         self.assertIn("updated_at", columns)
         
-        # Test downgrade
+        # Run the third migration (comments table)
+        self._run_alembic_command("upgrade", "34d7a17ebdd5")
+
+        # Verify the comments table exists
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='comments'")
+        self.assertEqual(cursor.fetchone()[0], "comments")
+
+        # Verify the columns in the comments table
+        cursor.execute("PRAGMA table_info(comments)")
+        columns = [row[1] for row in cursor.fetchall()]
+        self.assertIn("id", columns)
+        self.assertIn("content", columns)
+        self.assertIn("user_id", columns)
+        self.assertIn("post_id", columns)
+        self.assertIn("parent_id", columns)
+        self.assertIn("created_at", columns)
+        self.assertIn("updated_at", columns)
+
+        # Test downgrade from comments to posts
+        self._run_alembic_command("downgrade", "2e6c867ebffd")
+
+        # Verify the comments table is gone
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='comments'")
+        self.assertIsNone(cursor.fetchone())
+
+        # Test downgrade from posts to users
         self._run_alembic_command("downgrade", "69be7091e340")
-        
+
         # Verify the posts table is gone
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='posts'")
         self.assertIsNone(cursor.fetchone())

@@ -54,17 +54,12 @@ jobs:
       - name: Test Alembic Migrations
         uses: OpenMindUA/alembic-actions/actions/alembic-test@v1
         with:
-          # Relative path to the alembic.ini file
-          alembic_ini_path: 'alembic.ini'
-          
-          # Test options (all enabled by default)
-          test_single_head: 'true'
-          test_upgrades: 'true'
-          test_downgrades: 'true'
-          test_model_definitions: 'true'
-          
-          # Database options (defaults to SQLite in-memory)
-          db_url: 'sqlite:///./test_migrations.db'
+          # Database configuration
+          dialect: 'sqlite'  # Database dialect to use
+          alembic_ini: 'alembic.ini'  # Path to alembic.ini file
+          migration_path: 'migrations'  # Path to migration scripts
+          database_url: 'sqlite:///./test_migrations.db'  # Database URL for testing
+          # test_data_script: ''  # Optional script to load test data
 ```
 
 ## Required Permissions
@@ -83,14 +78,11 @@ These permissions allow the action to post comments on pull requests with the te
 
 The GitHub Action supports the following parameters:
 
-- `alembic_ini_path`: Path to your alembic.ini file (default: alembic.ini)
-- `target_branch`: Branch to compare migrations against (default: main or master)
-- `migration_script_path`: Path to migration scripts (default: derived from alembic.ini)
-- `test_single_head`: Ensure there is only one head revision (default: true)
-- `test_upgrades`: Test all possible upgrade paths (default: true)
-- `test_downgrades`: Test all possible downgrade paths (default: true)
-- `test_model_definitions`: Validate model definitions against migrations (default: true)
-- `db_url`: Database URL for testing (default: sqlite:///:memory:)
+- `dialect`: Database dialect to use (e.g., 'sqlite', 'postgresql', 'mysql')
+- `alembic_ini`: Path to your alembic.ini file (default: alembic.ini)
+- `migration_path`: Path to migration scripts (default: derived from alembic.ini)
+- `database_url`: Database URL for testing (default: sqlite:///:memory:)
+- `test_data_script`: Optional path to a script that loads test data
 
 ## Local Testing
 

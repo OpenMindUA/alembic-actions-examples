@@ -39,18 +39,9 @@ jobs:
       - name: Test Alembic Migrations
         uses: OpenMindUA/alembic-actions/actions/alembic-test@v1
         with:
-          # Relative path to the alembic.ini file
-          alembic_ini_path: 'alembic.ini'
-          
-          # Test options (all enabled by default)
-          test_single_head: 'true'
-          test_upgrades: 'true'
-          test_downgrades: 'true'
-          test_model_definitions: 'true'
-          
-          # Database options (defaults to SQLite in-memory)
-          db_url: 'sqlite:///./test_migrations.db'
-          
-          # Additional optional configurations
-          # target_branch: 'main'  # Base branch to compare against (default: main or master)
-          # migration_script_path: 'migrations' # Path to the migrations directory (default: derived from alembic.ini)
+          # Correct parameters based on the warning
+          dialect: 'sqlite'  # Database dialect (sqlite, mysql, postgresql, etc.)
+          alembic_ini: 'alembic.ini'  # Path to alembic.ini file
+          migration_path: 'migrations'  # Path to migration scripts
+          database_url: 'sqlite:///./test_migrations.db'  # Database URL for testing
+          # test_data_script: ''  # Optional script to load test data
