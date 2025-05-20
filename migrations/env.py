@@ -13,6 +13,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 # Import the SQLAlchemy models
 from app.models.user import Base
 from app.models.post import Post  # Import the Post model to include it in migrations
+from app.models.profile import Profile  # Import the Profile model to include it in migrations
 from app.database import SQLALCHEMY_DATABASE_URL
 
 # this is the Alembic Config object, which provides
