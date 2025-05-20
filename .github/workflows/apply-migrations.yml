@@ -13,6 +13,10 @@ jobs:
     name: Apply Alembic Migrations to Production
     runs-on: ubuntu-latest
     environment: production
+    # These permissions are needed for action outputs and reports
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

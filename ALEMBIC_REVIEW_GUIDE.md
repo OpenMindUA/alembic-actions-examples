@@ -10,6 +10,10 @@ Add the following to your GitHub Actions workflow file:
 jobs:
   check-migrations:
     runs-on: ubuntu-latest
+    # These permissions are needed for PR comments
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -44,6 +48,18 @@ jobs:
           # target_branch: 'main'  # Base branch to compare against (default: main or master)
           # migration_script_path: 'migrations' # Path to the migrations directory (default: derived from alembic.ini)
 ```
+
+## Required Permissions
+
+The GitHub Action requires specific permissions to function properly:
+
+```yaml
+permissions:
+  contents: read    # Needed to read repository contents
+  pull-requests: write  # Needed to comment on pull requests
+```
+
+These permissions allow the action to post comments on pull requests with the results of the migration validation.
 
 ## Available Options
 
