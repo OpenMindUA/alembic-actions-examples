@@ -28,16 +28,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Install alembic-review
-        run: |
-          pip install git+https://github.com/OpenMindUA/alembic-actions.git@v1
-
       - name: Validate migrations before applying
-        run: |
-          PYTHONPATH=$PYTHONPATH:$(pwd) alembic-review \
-            --alembic-ini-path alembic.ini \
-            --check-upgrade \
-            --check-duplicate-ops
+        uses: OpenMindUA/alembic-actions/actions/alembic-review@v1
+        with:
+          alembic_ini_path: 'alembic.ini'
+          check_upgrade: 'true'
+          check_duplicate_ops: 'true'
+          # Only check what's necessary before applying migrations
       
       # Example of how you might use this in a real workflow
       - name: Apply database migrations
