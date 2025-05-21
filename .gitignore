@@ -53,3 +53,4 @@ get-pip.py
 # Environment variables
 .env
 EOF < /dev/null
+**/.claude/settings.local.json
