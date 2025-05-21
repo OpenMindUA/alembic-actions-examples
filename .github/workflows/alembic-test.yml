@@ -18,6 +18,22 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -34,23 +50,14 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest pytest-alembic
+          pip install pytest pytest-alembic psycopg2-binary
 
       - name: Test Alembic Migrations
         uses: OpenMindUA/alembic-actions/actions/alembic-test@v1
         with:
-          # Relative path to the alembic.ini file
-          alembic_ini_path: 'alembic.ini'
-          
-          # Test options (all enabled by default)
-          test_single_head: 'true'
-          test_upgrades: 'true'
-          test_downgrades: 'true'
-          test_model_definitions: 'true'
-          
-          # Database options (defaults to SQLite in-memory)
-          db_url: 'sqlite:///./test_migrations.db'
-          
-          # Additional optional configurations
-          # target_branch: 'main'  # Base branch to compare against (default: main or master)
-          # migration_script_path: 'migrations' # Path to the migrations directory (default: derived from alembic.ini)
+          # Updated to use PostgreSQL
+          dialect: 'postgresql'  # Database dialect (sqlite, mysql, postgresql, etc.)
+          alembic_ini: 'alembic.ini'  # Path to alembic.ini file
+          migration_path: 'migrations'  # Path to migration scripts
+          database_url: 'postgresql://postgres:postgres@localhost:5432/test_db'  # Database URL for testing
+          # test_data_script: ''  # Optional script to load test data
