@@ -33,7 +33,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Validate migrations before applying
-        uses: OpenMindUA/alembic-actions/actions/alembic-review@v1
+        uses: OpenMindUA/alembic-actions/review@v0.2
         with:
           alembic_ini_path: 'alembic.ini'
           check_upgrade: 'true'
