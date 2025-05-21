@@ -16,5 +16,8 @@ class Post(Base):
     # Define relationship to User model
     user = relationship("User", backref="posts")
 
+    # Many-to-many relationship with tags
+    tags = relationship("Tag", secondary="post_tags", back_populates="posts")
+
     def __repr__(self):
         return f"<Post(title='{self.title}', user_id={self.user_id})>"
