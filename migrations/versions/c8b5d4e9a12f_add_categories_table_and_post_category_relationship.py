@@ -65,7 +65,6 @@ def downgrade() -> None:
     )
 
     with op.batch_alter_table('posts', schema=None, copy_from=posts_table) as batch_op:
-        batch_op.drop_constraint('fk_posts_category_id', type_='foreignkey')
         batch_op.drop_column('category_id')
 
     op.drop_index(op.f('ix_categories_slug'), table_name='categories')
