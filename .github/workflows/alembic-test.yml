@@ -37,7 +37,7 @@ jobs:
           pip install pytest pytest-alembic
 
       - name: Test Alembic Migrations
-        uses: OpenMindUA/alembic-actions/actions/alembic-test@v1
+        uses: OpenMindUA/alembic-actions/test@v0.2
         with:
           # Relative path to the alembic.ini file
           alembic_ini_path: 'alembic.ini'
