@@ -51,11 +51,11 @@ class TestAlembicMigrations(unittest.TestCase):
         
         # Run the second migration (posts table)
         self._run_alembic_command("upgrade", "2e6c867ebffd")
-        
+
         # Verify the posts table exists
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='posts'")
         self.assertEqual(cursor.fetchone()[0], "posts")
-        
+
         # Verify the columns in the posts table
         cursor.execute("PRAGMA table_info(posts)")
         columns = [row[1] for row in cursor.fetchall()]
@@ -96,7 +96,39 @@ class TestAlembicMigrations(unittest.TestCase):
 
         # Verify the posts table is gone
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='posts'")
+
+        # Run the third migration (profiles table)
+        self._run_alembic_command("upgrade", "277e73a7235b")
+
+        # Verify the profiles table exists
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='profiles'")
+        self.assertEqual(cursor.fetchone()[0], "profiles")
+
+        # Verify the columns in the profiles table
+        cursor.execute("PRAGMA table_info(profiles)")
+        columns = [row[1] for row in cursor.fetchall()]
+        self.assertIn("id", columns)
+        self.assertIn("user_id", columns)
+        self.assertIn("full_name", columns)
+        self.assertIn("bio", columns)
+        self.assertIn("birth_date", columns)
+        self.assertIn("avatar_url", columns)
+        self.assertIn("location", columns)
+
+        # Test downgrade to the posts migration
+        self._run_alembic_command("downgrade", "2e6c867ebffd")
+
+        # Verify the profiles table is gone
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='profiles'")
+
         self.assertIsNone(cursor.fetchone())
+
+        # Verify the posts table still exists
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='posts'")
+        self.assertEqual(cursor.fetchone()[0], "posts")
+
+        # Test downgrade to the users migration
+        self._run_alembic_command("downgrade", "69be7091e340")
         
         # Verify the users table still exists
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")
